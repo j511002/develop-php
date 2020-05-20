@@ -35,7 +35,8 @@ The environment variables that this image can use are as follows:
 - ENV XDEBUG_TRACE_OUTPUT_DIR /var/logs/php/xdebug/xdebug_trace
 
 ### Custom php.ini
-Just replace the `/usr/local/etc/php/php.ini` file.If you use the docker-compose,you can do like this:
+You can get a default php.ini like this:`docker cp mycontainer:/usr/local/etc/php/php.ini /xxx/xxx/`.
+After the modification,please replace the `/usr/local/etc/php/php.ini` file in the image.If you use the docker-compose,you can do like this:
 ```
 ...
     php:

@@ -2,6 +2,14 @@ FROM php:7.4.5-fpm-alpine
 LABEL Maintainer="JiangZH <j5110021@gmail.com>" \
       Description="PHP-FPM 7.4.5 on Alpine Linux .  "
 
+ENV XDEBUG_IDEKEY PHPSTORM
+ENV XDEBUG_PORT 9001
+ENV XDEBUG_HOST docker.for.mac.localhost
+ENV XDEBUG_REMOTE_LOG /var/logs/php/xdebug/remote.log
+ENV XDEBUG_PROFILER_ENABLE_TRAIGGER 1
+ENV XDEBUG_PROFILER_OUTPUT_DIR /var/logs/php/xdebug/xdebug_profiler
+ENV XDEBUG_TRACE_OUTPUT_DIR /var/logs/php/xdebug/xdebug_trace
+
 RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.tuna.tsinghua.edu.cn/g' /etc/apk/repositories \ 
     && apk update \
     && apk add --no-cache git libmcrypt-dev freetype-dev libjpeg-turbo-dev libpng-dev libzip-dev \
@@ -23,4 +31,18 @@ RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local
     && composer config -g repo.packagist composer https://mirrors.aliyun.com/composer/
 
 # Use the default production configuration
-# RUN cp "$PHP_INI_DIR/php.ini-production" "$PHP_INI_DIR/php.ini"
+RUN cp "$PHP_INI_DIR/php.ini-development" "$PHP_INI_DIR/php.ini"
+# 写入Xdebug的内容
+RUN sed -i "1 a xdebug.idekey=${XDEBUG_IDEKEY}" /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
+RUN sed -i "1 a xdebug.remote_autostart=true" /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
+RUN sed -i "1 a xdebug.remote_mode=req" /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
+RUN sed -i "1 a xdebug.remote_handler=dbgp" /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
+RUN sed -i "1 a xdebug.remote_port=${XDEBUG_PORT}" /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
+RUN sed -i "1 a xdebug.remote_host=${XDEBUG_HOST}" /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
+RUN sed -i "1 a xdebug.remote_enable=on" /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
+RUN sed -i "1 a xdebug.remote_log=${XDEBUG_REMOTE_LOG}" /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
+RUN sed -i "1 a xdebug.profiler_enable=0" /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
+RUN sed -i "1 a xdebug.profiler_enable_trigger=${XDEBUG_PROFILER_ENABLE_TRAIGGER}" /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
+RUN sed -i "1 a xdebug.profiler_output_name=cachegrind.out.%t.%p" /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
+RUN sed -i "1 a xdebug.profiler_output_dir=${XDEBUG_PROFILER_OUTPUT_DIR}" /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
+RUN sed -i "1 a xdebug.trace_output_dir=${XDEBUG_TRACE_OUTPUT_DIR}" /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini

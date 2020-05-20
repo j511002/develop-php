@@ -44,3 +44,6 @@ After the modification,please replace the `/usr/local/etc/php/php.ini` file in t
             - ./php/php.ini:/usr/local/etc/php/php.ini:ro
 ...
 ```
+
+## License
+You can use this image freely under the premise of observing the license contained in the [php image](https://www.php.net/license/) and [the repo-info repository's php/ directory](https://github.com/docker-library/repo-info/tree/master/repos/php).
